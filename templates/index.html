@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Домашние торты на заказ</h1>
+    <p>Классика, муссовые торты и чизкейки ручной работы.
+       Выберите торт в каталоге, добавьте в корзину и оформите заказ —
+       без регистрации.</p>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('catalog') }}">Перейти в каталог</a>
+</section>
+
+<section class="featured">
+    <h2>Популярные торты</h2>
+    <div class="product-grid">
+        {% for item in featured %}
+            <a class="product-card" href="{{ url_for('product', product_id=item['id']) }}">
+                <div class="product-emoji">{{ item['emoji'] }}</div>
+                <div class="product-info">
+                    <span class="product-name">{{ item['name'] }}</span>
+                    <span class="product-weight">{{ item['weight'] }}</span>
+                    <span class="product-price">{{ item['price'] }} ₽</span>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

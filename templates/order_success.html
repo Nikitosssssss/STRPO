@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Заказ оформлен{% endblock %}
+
+{% block content %}
+<section class="order-success" id="order-success">
+    <div class="success-emoji">🎉</div>
+    <h1>Заказ №{{ order['id'] }} оформлен!</h1>
+    <p>{{ order['customer_name'] }}, спасибо за заказ! Кондитер свяжется с вами
+       по телефону {{ order['phone'] }} для подтверждения.</p>
+
+    <table class="order-table">
+        <thead>
+        <tr><th>Торт</th><th>Количество</th><th>Сумма</th></tr>
+        </thead>
+        <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item['product_name'] }}</td>
+            <td>{{ item['quantity'] }}</td>
+            <td>{{ item['quantity'] * item['price'] }} ₽</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul class="order-meta">
+        <li>Дата доставки: {{ order['delivery_date'] }}, {{ order['delivery_slot'] }}</li>
+        <li>Адрес: {{ order['address'] }}</li>
+        <li>Товары: {{ order['items_total'] }} ₽</li>
+        <li>Доставка: {{ order['delivery_cost'] }} ₽</li>
+        <li class="order-total">Итого к оплате: {{ order['total'] }} ₽</li>
+    </ul>
+
+    <a href="{{ url_for('catalog') }}" class="btn btn-primary">Вернуться в каталог</a>
+</section>
+{% endblock %}

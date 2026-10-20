@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ product['name'] }}{% endblock %}
+
+{% block content %}
+<nav class="breadcrumbs">
+    <a href="{{ url_for('index') }}">Главная</a> /
+    <a href="{{ url_for('catalog') }}">Каталог</a> / {{ product['name'] }}
+</nav>
+
+<div class="product-page" id="product-page">
+    <div class="product-emoji product-emoji-lg">{{ product['emoji'] }}</div>
+    <div class="product-details">
+        <h1 id="product-name">{{ product['name'] }}</h1>
+        <p class="product-category">{{ product['category'] }} · {{ product['weight'] }}</p>
+        <p class="product-price price-lg" id="product-price">{{ product['price'] }} ₽</p>
+        <p class="product-description">{{ product['description'] }}</p>
+
+        <form method="post" action="{{ url_for('cart_add', product_id=product['id']) }}"
+              class="add-to-cart-form" id="add-to-cart-form">
+            <label for="quantity">Количество:</label>
+            <input type="number" id="quantity" name="quantity" value="1" min="1" max="99">
+            <button type="submit" class="btn btn-primary" id="add-to-cart-btn">
+                Добавить в корзину
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

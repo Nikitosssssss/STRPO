@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Оформление заказа{% endblock %}
+
+{% block content %}
+<h1>Оформление заказа</h1>
+
+<div class="checkout-layout">
+    <form method="post" action="{{ url_for('checkout') }}" class="checkout-form" id="checkout-form" novalidate>
+        <div class="form-group">
+            <label for="name">Фамилия и имя *</label>
+            <input type="text" id="name" name="name" required
+                   placeholder="Иванов Иван" value="{{ form.get('name', '') }}">
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Телефон *</label>
+            <input type="tel" id="phone" name="phone" required
+                   placeholder="+7(999)123-45-67" value="{{ form.get('phone', '') }}">
+        </div>
+
+        <div class="form-group">
+            <label for="email">E-mail *</label>
+            <input type="text" id="email" name="email" required
+                   placeholder="user@mail.ru" value="{{ form.get('email', '') }}">
+        </div>
+
+        <fieldset class="form-group">
+            <legend>Способ получения *</legend>
+            <label class="radio-label">
+                <input type="radio" id="delivery-type-delivery" name="delivery_type" value="delivery"
+                       {% if form.get('delivery_type') != 'pickup' %}checked{% endif %}>
+                Доставка курьером ({{ delivery_cost }} ₽)
+            </label>
+            <label class="radio-label">
+                <input type="radio" id="delivery-type-pickup" name="delivery_type" value="pickup"
+                       {% if form.get('delivery_type') == 'pickup' %}checked{% endif %}>
+                Самовывоз (бесплатно)
+            </label>
+        </fieldset>
+
+        <div class="form-group">
+            <label for="address">Адрес доставки *</label>
+            <input type="text" id="address" name="address"
+                   placeholder="ул. Ленина, д. 42, кв. 10" value="{{ form.get('address', '') }}">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="delivery_date">Дата доставки *</label>
+                <input type="text" id="delivery_date" name="delivery_date" required
+                       placeholder="25.12.2026" value="{{ form.get('delivery_date', '') }}">
+            </div>
+            <div class="form-group">
+                <label for="delivery_slot">Интервал *</label>
+                <select id="delivery_slot" name="delivery_slot">
+                    <option value="10:00-14:00" {% if form.get('delivery_slot') == '10:00-14:00' %}selected{% endif %}>10:00–14:00</option>
+                    <option value="14:00-18:00" {% if form.get('delivery_slot') == '14:00-18:00' %}selected{% endif %}>14:00–18:00</option>
+                    <option value="18:00-22:00" {% if form.get('delivery_slot') == '18:00-22:00' %}selected{% endif %}>18:00–22:00</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="comment">Комментарий к заказу</label>
+            <textarea id="comment" name="comment" rows="3"
+                      placeholder="Надпись на торте, пожелания...">{{ form.get('comment', '') }}</textarea>
+        </div>
+
+        <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+                <input type="checkbox" id="agree" name="agree" value="yes" required>
+                Согласен(на) на обработку персональных данных *
+            </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg" id="submit-order-btn">
+            Подтвердить заказ
+        </button>
+    </form>
+
+    <aside class="order-summary" id="order-summary">
+        <h2>Ваш заказ</h2>
+        <ul class="summary-list">
+            {% for item in items %}
+            <li>
+                <span>{{ item['product']['name'] }} × {{ item['quantity'] }}</span>
+                <span>{{ item['sum'] }} ₽</span>
+            </li>
+            {% endfor %}
+        </ul>
+        <p class="summary-line">Товары: <span>{{ items_total }} ₽</span></p>
+        <p class="summary-line">Доставка: <span id="summary-delivery">{{ delivery_cost }} ₽</span></p>
+        <p class="summary-total">Итого: <span id="summary-total">{{ items_total + delivery_cost }} ₽</span></p>
+    </aside>
+</div>
+{% endblock %}

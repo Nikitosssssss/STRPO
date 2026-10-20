@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Корзина{% endblock %}
+
+{% block content %}
+<h1>Корзина</h1>
+
+{% if items %}
+<table class="cart-table" id="cart-table">
+    <thead>
+    <tr>
+        <th>Торт</th>
+        <th>Цена</th>
+        <th>Количество</th>
+        <th>Сумма</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in items %}
+    <tr class="cart-row" data-price="{{ item['product']['price'] }}">
+        <td>
+            <span class="cart-emoji">{{ item['product']['emoji'] }}</span>
+            <a class="cart-product-name" href="{{ url_for('product', product_id=item['product']['id']) }}">
+                {{ item['product']['name'] }}</a>
+        </td>
+        <td class="cart-price">{{ item['product']['price'] }} ₽</td>
+        <td>
+            <form method="post" action="{{ url_for('cart_update') }}" class="qty-form">
+                <input type="hidden" name="product_id" value="{{ item['product']['id'] }}">
+                <input type="number" name="quantity" value="{{ item['quantity'] }}"
+                       min="1" max="99" class="qty-input"
+                       aria-label="Количество {{ item['product']['name'] }}">
+                <button type="submit" class="btn btn-small">Обновить</button>
+            </form>
+        </td>
+        <td class="row-sum">{{ item['sum'] }} ₽</td>
+        <td>
+            <form method="post" action="{{ url_for('cart_remove', product_id=item['product']['id']) }}">
+                <button type="submit" class="btn btn-danger btn-small">Удалить</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<div class="cart-summary" id="cart-summary">
+    <p class="cart-total">Итого: <strong id="cart-total">{{ items_total }} ₽</strong></p>
+    <div class="cart-actions">
+        <form method="post" action="{{ url_for('cart_clear') }}"
+              onsubmit="return confirm('Очистить корзину полностью?');">
+            <button type="submit" class="btn btn-danger" id="clear-cart-btn">Очистить корзину</button>
+        </form>
+        <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-lg" id="checkout-btn">
+            Оформить заказ</a>
+    </div>
+</div>
+{% else %}
+<p class="empty-state" id="cart-empty">Корзина пуста. Загляните в
+    <a href="{{ url_for('catalog') }}">каталог</a> и выберите торт.</p>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    /* Небольшой клиентский скрипт: пересчёт суммы строки при изменении
+       количества (демонстрация JavaScript + execute_script в автотестах). */
+    function recalcRow(row) {
+        var qty = row.querySelector(".qty-input");
+        var price = parseInt(row.dataset.price, 10);
+        var sum = row.querySelector(".row-sum");
+        sum.textContent = (qty.value * price) + " ₽";
+    }
+    document.querySelectorAll(".qty-input").forEach(function (input) {
+        input.addEventListener("change", function () {
+            recalcRow(input.closest(".cart-row"));
+        });
+    });
+</script>
+{% endblock %}

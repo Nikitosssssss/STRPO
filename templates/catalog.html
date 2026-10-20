@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Каталог{% endblock %}
+
+{% block content %}
+<h1>Каталог тортов</h1>
+
+<form class="catalog-filters" method="get" action="{{ url_for('catalog') }}" id="catalog-form">
+    <input type="text" name="q" value="{{ query }}" placeholder="Поиск по названию или описанию"
+           id="search-input" class="filter-input">
+    <select name="category" id="category-select" class="filter-input">
+        <option value="">Все категории</option>
+        {% for c in categories %}
+            <option value="{{ c }}" {% if c == category %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary" id="search-btn">Найти</button>
+    {% if query or category %}
+        <a href="{{ url_for('catalog') }}" class="btn btn-link">Сбросить</a>
+    {% endif %}
+</form>
+
+{% if products %}
+<div class="product-grid" id="product-grid">
+    {% for item in products %}
+    <div class="product-card">
+        <a href="{{ url_for('product', product_id=item['id']) }}" class="product-link">
+            <div class="product-emoji">{{ item['emoji'] }}</div>
+            <div class="product-info">
+                <span class="product-name">{{ item['name'] }}</span>
+                <span class="product-category">{{ item['category'] }} · {{ item['weight'] }}</span>
+                <span class="product-price">{{ item['price'] }} ₽</span>
+            </div>
+        </a>
+        <form method="post" action="{{ url_for('cart_add', product_id=item['id']) }}">
+            <button type="submit" class="btn btn-primary btn-block">В корзину</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="empty-state">По вашему запросу ничего не найдено. Попробуйте другое слово
+   или <a href="{{ url_for('catalog') }}">сбросьте фильтры</a>.</p>
+{% endif %}
+{% endblock %}
