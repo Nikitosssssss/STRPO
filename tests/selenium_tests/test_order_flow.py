@@ -138,6 +138,16 @@ class TestProductAndCart(CakeShopTestCase):
         self.assertEqual(cart.header_cart_count(), "2")
         self.assertEqual(cart.total(), "4800 ₽")
 
+    def test_add_from_catalog_stays_on_catalog(self):
+        """Добавление из каталога не открывает корзину: пользователь
+        остаётся на той же странице, подтверждение -- flash-сообщение."""
+        from tests.selenium_tests.pages.catalog_page import CatalogPage
+        catalog = CatalogPage(self.driver).open()
+        flash_text = catalog.add_first_to_cart()
+        self.assertIn("добавлен в корзину", flash_text)
+        self.assertIn("/catalog", self.driver.current_url)
+        self.assertEqual(catalog.header_cart_count(), "1")
+
     def test_remove_item_from_cart(self):
         from tests.selenium_tests.pages.catalog_page import CatalogPage
         cart = CatalogPage(self.driver).open() \

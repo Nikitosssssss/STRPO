@@ -11,6 +11,8 @@ class CatalogPage(BasePage):
     SEARCH_BTN = (By.ID, "search-btn")
     PRODUCT_CARDS = (By.CSS_SELECTOR, "#product-grid .product-card")
     PRODUCT_NAMES = (By.CSS_SELECTOR, "#product-grid .product-name")
+    ADD_FIRST_BTN = (By.CSS_SELECTOR, "#product-grid form button")
+    FLASH_SUCCESS = (By.CSS_SELECTOR, "#flashes .flash-success")
     EMPTY_STATE = (By.ID, "product-grid")
 
     def open(self):
@@ -22,6 +24,10 @@ class CatalogPage(BasePage):
     def search(self, phrase):
         self.type_into(self.SEARCH_INPUT, phrase)
         self.click(self.SEARCH_BTN)
+        # Страховка от редкой гонки «потерянного клика» в headless-браузере:
+        # если перехода не случилось -- повторяем нажатие один раз.
+        if "q=" not in self.driver.current_url:
+            self.click(self.SEARCH_BTN)
         return self
 
     def select_category(self, category):
@@ -35,6 +41,12 @@ class CatalogPage(BasePage):
 
     def product_count(self):
         return len(self.find_all(self.PRODUCT_CARDS))
+
+    def add_first_to_cart(self):
+        """Кнопка «В корзину» на карточке: после нажатия пользователь
+        остаётся в каталоге -- возвращаем текст flash-подтверждения."""
+        self.click(self.ADD_FIRST_BTN)
+        return self.wait_visible(self.FLASH_SUCCESS).text
 
     def open_product_by_name(self, name):
         """Открывает страницу товара, найденного по тексту ссылки."""

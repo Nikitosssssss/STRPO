@@ -105,7 +105,9 @@ def cart_add(product_id):
     session["cart"] = cart
     session.modified = True
     flash(f"«{item['name']}» добавлен в корзину", "success")
-    return redirect(url_for("cart"))
+    # Корзина не открывается автоматически: пользователь остаётся на странице,
+    # с которой добавил товар (адрес берём из Referer).
+    return redirect(request.referrer or url_for("product", product_id=product_id))
 
 
 @app.route("/cart")

@@ -12,6 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 class BasePage:
     BASE_URL = "http://127.0.0.1:5001"
+    CART_COUNT = (By.ID, "cart-count")   # счётчик корзины в шапке сайта
 
     def __init__(self, driver, timeout=5):
         self.driver = driver
@@ -56,3 +57,7 @@ class BasePage:
     def attribute_of(self, locator, name):
         """Метод get_attribute -- лекция 6."""
         return self.find(locator).get_attribute(name)
+
+    def header_cart_count(self):
+        """Счётчик корзины в шапке доступен с любой страницы."""
+        return self.text_of(self.CART_COUNT)

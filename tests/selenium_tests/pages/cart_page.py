@@ -10,7 +10,6 @@ class CartPage(BasePage):
     TOTAL = (By.ID, "cart-total")
     CLEAR_BTN = (By.ID, "clear-cart-btn")
     CHECKOUT_BTN = (By.ID, "checkout-btn")
-    CART_COUNT = (By.ID, "cart-count")
 
     def open(self):
         return super().open("/cart")
@@ -23,9 +22,6 @@ class CartPage(BasePage):
 
     def total(self):
         return self.text_of(self.TOTAL)
-
-    def header_cart_count(self):
-        return self.text_of(self.CART_COUNT)
 
     def first_row(self):
         return self.find_all(self.CART_ROWS)[0]
