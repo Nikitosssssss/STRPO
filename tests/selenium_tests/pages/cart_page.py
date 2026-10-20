@@ -45,8 +45,10 @@ class CartPage(BasePage):
     def clear_with_confirm(self, accept=True):
         """Нажимает «Очистить корзину»: появляется модальное окно confirm(),
         работаем с ним через driver.switch_to.alert (лекция 6)."""
+        from selenium.webdriver.support import expected_conditions as EC
         self.click(self.CLEAR_BTN)
-        alert = self.driver.switch_to.alert
+        # Явное ожидание появления диалога (лекция 6: WebDriverWait).
+        alert = self.wait.until(EC.alert_is_present())
         text = alert.text
         if accept:
             alert.accept()
